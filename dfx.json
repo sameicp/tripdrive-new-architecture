@@ -1,0 +1,20 @@
+{
+  "canisters": {
+    "tripdrive_backend": {
+      "main": "src/tripdrive_backend/main.mo",
+      "type": "motoko"
+    },
+    "admin": {
+      "main": "src/admin/main.mo",
+      "type": "motoko"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
