@@ -13,13 +13,13 @@ module {
     public class State() {
         Debug.print("State invoked");
         let passengerToRequests 
-             = HashMap.HashMap<Principal, T.RideRequestType>(10, Principal.equal, Principal.hash);
+             = HashMap.HashMap<Principal, T.Request>(10, Principal.equal, Principal.hash);
         let driverToRatings = HashMap.HashMap<Principal, Buffer.Buffer<Float>>(10, Principal.equal, Principal.hash);
         let passengerToRideId = HashMap.HashMap<Principal, Nat32>(10, Principal.equal, Principal.hash);
         let driverToRidesIds = HashMap.HashMap<Principal, Buffer.Buffer<Nat32>>(10, Principal.equal, Principal.hash);
         let rideIdToRideDetail = HashMap.HashMap<Nat32, T.RideDetail>(10, Nat32.equal, func(x){x});
 
-        var requestsInfoStoreBackup = List.nil<T.RideRequestType>();
+        var requestsInfoStoreBackup = List.nil<T.Request>();
         var ridesInfoStoreBackup = List.nil<T.RideDetail>();
         var numberOfCompletedRides: Nat = 0;
 
@@ -33,29 +33,29 @@ module {
         // Passennger Request State //
         //////////////////////////////
 
-        public func addRequest(passengerId: Principal, requestType: T.RideRequestType) {
+        public func addRequest(passengerId: Principal, requestType: T.Request) {
             Debug.print(debug_show ("Adding requests...."));
             passengerToRequests.put(passengerId, requestType);
         };
 
-        public func getRequest(passengerId: Principal): ?T.RideRequestType {
+        public func getRequest(passengerId: Principal): ?T.Request {
             Debug.print(debug_show ("Getting request for ", passengerId));
             return passengerToRequests.get(passengerId);
         };
 
-        public func removeRequest(passengerId: Principal): ?T.RideRequestType {
+        public func removeRequest(passengerId: Principal): ?T.Request {
             Debug.print(debug_show ("Removing the request..."));
             return passengerToRequests.remove(passengerId);
         };
 
-        public func updateRequest(passengerId: Principal, newRequest: T.RideRequestType) {
+        public func updateRequest(passengerId: Principal, newRequest: T.Request) {
             Debug.print(debug_show ("Updating with ", newRequest));
             let oldRequest = passengerToRequests.replace(passengerId, newRequest);
             Debug.print(debug_show ("Olde request ", oldRequest));
         };
 
-        public func getListOfRequests(): [T.RideRequestType] {
-            let requests: Iter.Iter<T.RideRequestType> = passengerToRequests.vals();
+        public func getListOfRequests(): [T.Request] {
+            let requests: Iter.Iter<T.Request> = passengerToRequests.vals();
             return Iter.toArray(requests);
         };
 
@@ -83,6 +83,18 @@ module {
                     Debug.trap("Driver ratings are not found....");
                 };
             };
+        };
+
+        public func getAverageRating(driverId: Principal): Float {
+            Debug.print(debug_show ("Calculating driver average rating"));
+            let ratings: [Float] = getRatings(driverId);
+            let  baseValue: Float = 0;
+            func add(a: Float, b: Float): Float {
+                return a + b;
+            };
+
+            let totalRating: Float = Array.foldLeft<Float, Float>(ratings, baseValue, add);
+            return totalRating;
         };
 
         public func getRatings(driverId: Principal): [Float] {
@@ -219,7 +231,7 @@ module {
 
         // requestInfoStoreBackup
 
-        public func addRequestToBackUp(request: T.RideRequestType) {
+        public func addRequestToBackUp(request: T.Request) {
             Debug.print(debug_show ("Adding a request to the backup...."));
             requestsInfoStoreBackup := List.push(request, requestsInfoStoreBackup);
         };
@@ -227,7 +239,7 @@ module {
         public func clearRequestListFromBackup() {
             Debug.print(debug_show ("NB. Clearing requests backup storage..."));
             Debug.print(debug_show ("This action can only be done by the admin..."));
-            requestsInfoStoreBackup := List.nil<T.RideRequestType>();
+            requestsInfoStoreBackup := List.nil<T.Request>();
         };
 
         public func sizeOfRequestListFromBackup(): Nat {

@@ -21,10 +21,20 @@ module {
     };
 
     public type Vehicle = {
-        name: Text;
+        carOwnerId: Principal;
+        carName: Text;
         licensePlatenumber: Text;
-        color: Text;
+        carColor: Text;
         carModel: Text;
+        carCapacity: Nat;
+        carDescription: Text;
+        var carState: VehicleState;
+    };
+
+    public type VehicleState = {
+        #Pending;
+        #Accepted;
+        #Banned;
     };
 
     public type Position = {
@@ -32,9 +42,9 @@ module {
         lng: Float;
     };
 
-     public type RideRequestType = {
-        request_id: Nat32;
-        user_id: Principal;
+     public type Request = {
+        requestId: Nat32;
+        userId: Principal;
         depature: Position;
         destination: Position;
         var status: RequestStatus;
@@ -71,5 +81,33 @@ module {
         #RideCompleted;
         #RideCancelled;
     };
+
+
+    //-------------------------------------------------//
+    //----------------- Input Values ------------------//
+    //-------------------------------------------------//
+
+    public type PassengerInput = {
+        username: Text;
+        email: Text;
+        phoneNumber: Text;
+    };
+
+    public type RequestInput = {
+        depature: Position;
+        destination: Position;
+        price: Float;
+    };
+
+    public type VehicleInput = {
+        carName: Text;
+        licensePlatenumber: Text;
+        carColor: Text;
+        carDescription: Text;
+        carCapacity: Nat;
+        carModel: Text;
+    };
+
+
 
 }
